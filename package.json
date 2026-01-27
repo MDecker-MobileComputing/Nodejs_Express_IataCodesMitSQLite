@@ -1,0 +1,21 @@
+{
+  "name": "nodejs_express_iatacodes",
+  "version": "1.0.0",
+  "description": "REST-API zur Abfrage von Fluglinien-Codes",
+  "author": "MDecker-MobileComputing",
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.21.2",
+    "logging": "^3.3.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  },
+  "scripts": {
+    "start": "node src/main.js",
+    "watch": "nodemon src/main.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

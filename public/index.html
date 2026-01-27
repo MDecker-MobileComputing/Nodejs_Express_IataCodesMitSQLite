@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>REST-API für Abfrage IATA-Codes</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="iata.css">
+</head>
+<body>
+
+  <h1>REST-API für Abfrage IATA-Codes</h1>
+
+  <ul>
+    <li>
+      <a href="api/v1/fluglinie/" target="_blank">Alle Datensätze</a>
+    </li>
+    <li>
+      <a href="api/v1/fluglinie/LH" target="_blank">Datensatz für IATA-Code "LH" (Lufthansa, in Default-Daten enthalten)</a>
+    </li>
+    <li>
+      <a href="api/v1/fluglinie/TP" target="_blank">Datensatz für IATA-Code "TP" (TAP Portugal, nicht in Default-Daten enthalten)</a>
+    </li>
+    <li>
+      <a href="api/v1/fluglinie?q=air" target="_blank">Suche nach Datensätzen mit "air" in Name oder Land</a>
+    </li>
+    <li>
+      <a href="api/v1/fluglinie?q=xyz" target="_blank">Suche nach Datensätzen mit "xyz" in Name oder Land</a>
+    </li>
+
+  </ul>
+
+</body>
