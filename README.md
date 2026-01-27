@@ -4,7 +4,11 @@
 
 Dieses Repository enthält eine Nodejs-Implementierung einer einfachen REST-API, mit der Informationen zu
 Fluglinien anhand der [IATA-Codes](https://de.wikipedia.org/wiki/Liste_der_IATA-Airline-Codes) abgefragt
-werden können. Für die Persistenz wird [sqlite3](https://www.npmjs.com/package/sqlite) verwendet.
+werden können.
+
+Für die Persistenz wird [sqlite3](https://www.npmjs.com/package/sqlite) verwendet; es gibt aber auch
+noch eine Version dieses Repos, die [lowdb](https://www.npmjs.com/package/lowdb) anstelle *sqlite3*
+verwendet, siehe [hier](https://github.com/MDecker-MobileComputing/Nodejs_Express_IataCodes).
 
 <br>
 
