@@ -75,11 +75,11 @@ async function getResource( req, res ) {
 /**
  * REST-Endpunkt für HTTP-GET auf Collection.
  */
-function getCollection( req, res ) {
+async function getCollection( req, res ) {
 
     const suchString = req.query.q;
 
-    const ergebnisArray = datenbank.searchFluglinie( suchString );
+    const ergebnisArray = await datenbank.searchFluglinie( suchString );
 
     const anzahl = ergebnisArray.length
     logger.info( `Datensätze aus Collection zurückgeliefert: ${anzahl}` );

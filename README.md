@@ -16,7 +16,6 @@ verwendet, siehe [hier](https://github.com/MDecker-MobileComputing/Nodejs_Expres
 | -----------------------  | ----------------------------- | ----- | ------ | ----- | ------- | -------- |
 | Ressource  "Fluglinie"   | `/api/v1/fluglinie/:iataCode` | X     |        | X     | X       | X        |
 | Collection "Fluglinie"   | `/api/v1/fluglinie`           | X     | X      |       |         |          |
-| Ressource  "Flughafen"   | ...                           |       |        |       |         |          |
 
 <br>
 

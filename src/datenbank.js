@@ -42,7 +42,8 @@ if ( checkTabelleErgebnis ) {
 const anzahlZeilen = await db.get( "SELECT count(*) AS anzahl FROM fluglinien" );
 logger.info( `Anzahl der Datensätze beim Programmstart: ${anzahlZeilen.anzahl}` );
 
-const prepStmtReadFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE iata_code = ?" );
+const prepStmtReadFlueglinie   = await db.prepare( "SELECT * FROM fluglinien WHERE iata_code = ?" );
+const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ?" );
 
 
 // Methoden für CRUDS-Operationen: Create, Read, Update, Delete, Search
@@ -73,18 +74,6 @@ async function readFluglinie( iataCode ) {
 
         return null;
     }
-
-    /*
-    const ergebnis = fluglinienObjekt[ iataCode.toUpperCase() ];
-    if ( ergebnis ) {
-
-        return ergebnis.clone();
-
-    } else {
-
-        return null;
-    }
-    */
 }
 
 
@@ -95,20 +84,24 @@ async function readFluglinie( iataCode ) {
  *
  * @returns {Fluglinie[]} Array mit Fluglinien, die den Suchstring enthalten, ansonsten leeres Array
  */
-function searchFluglinie( suchString ) {
+async function searchFluglinie( suchString ) {
 
-    /*
-    const fluglinienArray = Object.values( fluglinienObjekt );
+    const suchPattern = `%${suchString}%`;
+    await prepStmtSearchFlueglinie.bind({ 1: suchPattern, 2: suchPattern });
+    const ergebnisArray = await prepStmtSearchFlueglinie.all();
 
-    if ( suchString ) {
+    let returnArray = [];
+    if ( ergebnisArray && ergebnisArray.length > 0 ) {
 
-        return fluglinienArray.filter( fluglinie => fluglinie.enthaelt( suchString ) );
+        for ( let i = 0; i < ergebnisArray.length; i++ ) {
 
-    } else {
-
-        return fluglinienArray;
+            const zeile = ergebnisArray[i];
+            const fluglinie = new Fluglinie( zeile.iata_code, zeile.name, zeile.land );
+            returnArray.push( fluglinie ) ;
+        }
     }
-    */
+
+    return returnArray;
 }
 
 
@@ -157,7 +150,7 @@ function deleteFluglinie( iataCode ) {
 
         return false;
     }
-        */
+    */
 }
 
 
