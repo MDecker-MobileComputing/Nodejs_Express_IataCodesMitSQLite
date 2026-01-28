@@ -79,12 +79,12 @@ const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHE
 const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code" );
 
 /**
- * Suche nach Fluglinien anhand eines Suchstrings oder alle Fluglinien zurückliefern.
+ * Suche nach Fluglinien anhand eines Such-Strings oder alle Fluglinien zurückliefern.
  *
  * @param {string} suchString String, der in Name oder Land der Fluglinie enthalten sein soll;
- *                 wenn leerer Strin "", dann werden alle Fluglinien zurückgeliefert.
+ *                 wenn leerer String "", dann werden alle Fluglinien zurückgeliefert.
  *
- * @returns {Fluglinie[]} Array mit Fluglinien, die den Suchstring enthalten, ansonsten leeres Array
+ * @returns {Fluglinie[]} Array mit Fluglinien, die den Such-String enthalten, ansonsten leeres Array
  */
 async function searchFluglinie( suchString ) {
 
