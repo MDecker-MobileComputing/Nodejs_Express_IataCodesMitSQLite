@@ -73,16 +73,19 @@ async function getResource( req, res ) {
 
 
 /**
- * REST-Endpunkt für HTTP-GET auf Collection.
+ * REST-Endpunkt für HTTP-GET auf Collection; liefert alle
+ * Datensätze zurück oder Suchergebnis für Teilstring
+ * in URL-Parameter "q".
  */
 async function getCollection( req, res ) {
 
-    const suchString = req.query.q;
+    let suchString = req.query.q;
+    if ( suchString == undefined ) { suchString = ""; }
 
     const ergebnisArray = await datenbank.searchFluglinie( suchString );
 
     const anzahl = ergebnisArray.length
-    logger.info( `Datensätze aus Collection zurückgeliefert: ${anzahl}` );
+    logger.info( `Für Such-String "${suchString}" Datensätze aus Collection zurückgeliefert: ${anzahl}` );
 
     res.setHeader( "X-ANZAHL", anzahl )
        .status( 200 )

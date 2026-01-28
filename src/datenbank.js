@@ -43,7 +43,8 @@ const anzahlZeilen = await db.get( "SELECT count(*) AS anzahl FROM fluglinien" )
 logger.info( `Anzahl der Datensätze beim Programmstart: ${anzahlZeilen.anzahl}` );
 
 const prepStmtReadFlueglinie   = await db.prepare( "SELECT * FROM fluglinien WHERE iata_code = ?" );
-const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ?" );
+const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ? ORDER BY iata_code" );
+const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code" );
 
 
 // Methoden für CRUDS-Operationen: Create, Read, Update, Delete, Search
@@ -78,17 +79,27 @@ async function readFluglinie( iataCode ) {
 
 
 /**
- * Suche nach Fluglinien anhand eines Suchstrings.
+ * Suche nach Fluglinien anhand eines Suchstrings oder alle Fluglinien zurückliefern.
  *
- * @param {string} suchString String, der in Name oder Land der Fluglinie enthalten sein soll
+ * @param {string} suchString String, der in Name oder Land der Fluglinie enthalten sein soll;
+ *                 wenn leerer Strin "", dann werden alle Fluglinien zurückgeliefert.
  *
  * @returns {Fluglinie[]} Array mit Fluglinien, die den Suchstring enthalten, ansonsten leeres Array
  */
 async function searchFluglinie( suchString ) {
 
-    const suchPattern = `%${suchString}%`;
-    await prepStmtSearchFlueglinie.bind({ 1: suchPattern, 2: suchPattern });
-    const ergebnisArray = await prepStmtSearchFlueglinie.all();
+    let ergebnisArray = null;
+    if ( suchString && suchString.trim().length > 0 ) {
+
+        const suchPattern = `%${suchString}%`;
+        await prepStmtSearchFlueglinie.bind({ 1: suchPattern, 2: suchPattern });
+        ergebnisArray = await prepStmtSearchFlueglinie.all();
+
+    } else {
+
+        ergebnisArray = await prepStmtAlleFlueglinien.all();
+    }
+
 
     let returnArray = [];
     if ( ergebnisArray && ergebnisArray.length > 0 ) {
