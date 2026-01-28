@@ -1,5 +1,5 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import { open }      from "sqlite";
+import sqlite3       from "sqlite3";
 import logging       from "logging";
 import { Fluglinie } from './fluglinie.js';
 
@@ -10,7 +10,7 @@ const db = await open({ filename: "iatacodes.db", driver: sqlite3.Database });
 
 const checkTabelleErgebnis = await db.get(
     `SELECT name FROM sqlite_master
-     WHERE type='table' AND name="fluglinien"`,
+            WHERE type='table' AND name="fluglinien"`,
 );
 if ( checkTabelleErgebnis ) {
 
