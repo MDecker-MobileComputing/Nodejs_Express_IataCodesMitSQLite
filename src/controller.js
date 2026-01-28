@@ -48,9 +48,7 @@ async function getResource( req, res ) {
     let iataCode = req.params.iataCode;
     iataCode = iataCode.toUpperCase();
 
-    const ergebnisObjektPromise = datenbank.readFluglinie( iataCode );
-
-    const ergebnisObjekt = await ergebnisObjektPromise;
+    const ergebnisObjekt = await datenbank.readFluglinie( iataCode );
 
     if ( ergebnisObjekt ) {
 
@@ -142,51 +140,59 @@ async function postCollection( req, res ) {
 /**
  * REST-Endpunkt für HTTP-PATCH auf Ressource (einzelne Attribute ersetzen).
  */
-function patchResource( req, res ) {
+async function patchResource( req, res ) {
 
     let iataCode = req.params.iataCode;
     iataCode = iataCode.toUpperCase();
 
-    const ergebnisObjekt = datenbank.readFluglinie( iataCode );
-    if ( ergebnisObjekt ) {
+    if ( !req.body.name && !req.body.land ) {
 
-        let attributGeaendert = false;
-        if ( req.body.name ) {
+        const nachricht = `Fluglinie mit IATA-Code "${iataCode}" soll geändert werden, aber kein Attribut angegeben.`;
+        logger.info( nachricht );
 
-            ergebnisObjekt.name = req.body.name;
-            attributGeaendert = true;
-        }
-        if ( req.body.land ) {
+        res.status( 400 ) // Bad Request
+           .json({ nachricht : nachricht });
+    }
 
-            ergebnisObjekt.land = req.body.land;
-            attributGeaendert = true;
-        }
-        if ( attributGeaendert === false ) {
+    if ( req.body.name ) {
 
-            const nachricht = `Für Entity mit IATA-Code "${iataCode}" kein Attribut zum Ändern gefunden.`;
+        const nameNeu = req.body.name.trim();
+        logger.info( `Name für IATA-Code "${iataCode}" soll auf "${nameNeu}" geändert werden.` );
+        const erfolg = await datenbank.updateName( iataCode, nameNeu );
+
+        if ( erfolg == false ) {
+
+            const nachricht = `Namensänderung für IATA-Code "${iataCode}" fehlgeschlagen.`;
             logger.warn( nachricht );
 
-            res.status( 400 ) // Bad Request
-               .json({ nachricht : nachricht });
+            res.status( 400 )
+               .json({ nachricht: nachricht });
         }
-
-        datenbank.updateFluglinie( ergebnisObjekt );
-
-        const nachricht = `Entity mit IATA-Code "${iataCode}" geändert.`;
-        logger.info( nachricht );
-        ergebnisObjekt.nachricht = nachricht;
-
-        res.status( 200 )
-           .json( ergebnisObjekt );
-
-    } else {
-
-        const nachricht = `Keine Fluglinie mit IATA-Code "${iataCode}" zum Ändern gefunden.`
-        logger.warn( nachricht );
-
-        res.status( 404 )
-           .json({ nachricht: nachricht });
     }
+
+    if ( req.body.land ) {
+
+        const landNeu = req.body.land.trim();
+        logger.info( `Land für IATA-Code "${iataCode}" soll auf "${landNeu}" geändert werden.` );
+        const erfolg = await datenbank.updateLand( iataCode, landNeu );
+
+        if ( erfolg == false ) {
+
+            const nachricht = `Änderung Land für IATA-Code "${iataCode}" fehlgeschlagen.`;
+            logger.warn( nachricht );
+
+            res.status( 400 )
+               .json({ nachricht: nachricht });
+        }
+    }
+
+    const ergebnisObjekt = await datenbank.readFluglinie( iataCode );
+
+    const nachricht = `Fluglinie mit IATA-Code "${iataCode}" geändert.`;
+    logger.info( nachricht );
+
+    res.status( 200 )
+       .json( ergebnisObjekt );
 }
 
 

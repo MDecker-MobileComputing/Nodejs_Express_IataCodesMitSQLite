@@ -42,16 +42,10 @@ if ( checkTabelleErgebnis ) {
 const anzahlZeilen = await db.get( "SELECT count(*) AS anzahl FROM fluglinien" );
 logger.info( `Anzahl der Datensätze beim Programmstart: ${anzahlZeilen.anzahl}` );
 
-const prepStmtInsertFluglinie  = await db.prepare( "INSERT INTO fluglinien ( iata_code, name, land ) VALUES ( ?, ?, ? )" );
-const prepStmtDeleteFluglinie  = await db.prepare( "DELETE FROM fluglinien WHERE IATA_CODE = ?" );
-const prepStmtReadFlueglinie   = await db.prepare( "SELECT * FROM fluglinien WHERE iata_code = ?" );
-const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ? ORDER BY iata_code" );
-const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code" );
+// Methoden für CRUDS-Operationen: Create, Read, Update, Delete, Search;
+// die benötigten Prepared Statements sind vor den jeweiligen Methoden deklariert.
 
-
-
-// Methoden für CRUDS-Operationen: Create, Read, Update, Delete, Search
-
+const prepStmtReadFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE iata_code = ?" );
 
 /**
  * Fluglinie für gegebenen IATA-Code auslesen.
@@ -80,6 +74,9 @@ async function readFluglinie( iataCode ) {
     }
 }
 
+
+const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ? ORDER BY iata_code" );
+const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code" );
 
 /**
  * Suche nach Fluglinien anhand eines Suchstrings oder alle Fluglinien zurückliefern.
@@ -118,6 +115,8 @@ async function searchFluglinie( suchString ) {
 }
 
 
+const prepStmtInsertFluglinie = await db.prepare( "INSERT INTO fluglinien ( iata_code, name, land ) VALUES ( ?, ?, ? )" );
+
 /**
  * Neue Fluglinie anlegen.
  *
@@ -140,6 +139,8 @@ async function createFluglinie( fluglinie ) {
 }
 
 
+const prepStmtDeleteFluglinie  = await db.prepare( "DELETE FROM fluglinien WHERE IATA_CODE = ?" );
+
 /**
  * Fluglinie für bestimmten IATA-Code löschen.
  *
@@ -157,8 +158,48 @@ async function deleteFluglinie( iataCode ) {
 }
 
 
+const prepStmtUpdateName = await db.prepare( "UPDATE fluglinien SET name = ? WHERE iata_code = ?" );
+
 /**
- * Fluglinie für bestimmten IATA-Code ersetzen.
+ * Name von Fluglinie ändern.
+ *
+ * @param {string} iataCode IATA-Code der Fluglinie
+ *
+ * @param {string} nameNeu Neuer Name der Fluglinie
+ *
+ * @returns {boolean} `true` gdw. wenn Name der Fluglinie aktualisiert werden konnte
+ */
+async function updateName( iataCode, nameNeu ) {
+
+    const ergebnis = await prepStmtUpdateName.run({ 1: nameNeu, 2: iataCode });
+
+    return ergebnis.changes > 0;
+}
+
+
+const prepStmtUpdateLand = await db.prepare( "UPDATE fluglinien SET land = ? WHERE iata_code = ?" );
+
+/**
+ * Land von Fluglinie ändern.
+ *
+ * @param {string} iataCode IATA-Code der Fluglinie
+ *
+ * @param {string} landNeu Neues Land für Fluglinie
+ *
+ * @returns {boolean} `true` gdw. wenn Name der Fluglinie aktualisiert werden konnte
+ */
+async function updateLand( iataCode, landNeu ) {
+
+    const ergebnis = await prepStmtUpdateLand.run({ 1: landNeu, 2: iataCode });
+
+    return ergebnis.changes > 0;
+}
+
+
+const prepStmtUpdateFluglinie = await db.prepare( "UPDATE fluglinien SET name = ?, land = ? WHERE iata_code = ?" );
+
+/**
+ * Fluglinie (Ganzer Datensatz) für bestimmten IATA-Code ersetzen.
  *
  * @param {Fluglinie} Fluglinien-Objekt mit neuen Daten
  *                    (alle Attribute inkl. IATA-Code müssen gesetzt sein).
@@ -166,24 +207,11 @@ async function deleteFluglinie( iataCode ) {
  * @return {boolean} `true` wenn Fluglinie ersetzt werden konnte,
  *                   `false` wenn Fluglinie nicht existiert.
  */
-function updateFluglinie( fluglinie ) {
+async function updateFluglinie( fluglinie ) {
 
-    /*
-    const objekt = readFluglinie( fluglinie.iataCode );
-    if ( objekt ) {
+    const ergebnis = await prepStmtUpdateFluglinie.run({ 1: fluglinie.name, 2: fluglinie.land, 3: fluglinie.iataCode });
 
-        objekt.name = fluglinie.name;
-        objekt.land = fluglinie.land;
-
-        fluglinienObjekt[ fluglinie.iataCode ] = objekt;
-
-        return true;
-
-    } else {
-
-        return false;
-    }
-    */
+    return ergebnis.changes > 0;
 }
 
 
@@ -199,5 +227,7 @@ export default {
     // Schreib-Operationen
     createFluglinie,
     deleteFluglinie,
-    updateFluglinie
+    updateFluglinie,
+    updateLand,
+    updateName
 };
