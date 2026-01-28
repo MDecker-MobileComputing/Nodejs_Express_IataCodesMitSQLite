@@ -24,7 +24,7 @@ if ( checkTabelleErgebnis ) {
         `CREATE TABLE fluglinien (
             iata_code TEXT PRIMARY KEY,
             name      TEXT,
-            land      TEXT)`
+            land      TEXT )`
         );
 
     // gleich einige Demo-Daten einfügen
@@ -42,9 +42,12 @@ if ( checkTabelleErgebnis ) {
 const anzahlZeilen = await db.get( "SELECT count(*) AS anzahl FROM fluglinien" );
 logger.info( `Anzahl der Datensätze beim Programmstart: ${anzahlZeilen.anzahl}` );
 
+const prepStmtInsertFluglinie  = await db.prepare( "INSERT INTO fluglinien ( iata_code, name, land ) VALUES ( ?, ?, ? )" );
+const prepStmtDeleteFluglinie  = await db.prepare( "DELETE FROM fluglinien WHERE IATA_CODE = ?" );
 const prepStmtReadFlueglinie   = await db.prepare( "SELECT * FROM fluglinien WHERE iata_code = ?" );
 const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ? ORDER BY iata_code" );
 const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code" );
+
 
 
 // Methoden für CRUDS-Operationen: Create, Read, Update, Delete, Search
@@ -100,7 +103,6 @@ async function searchFluglinie( suchString ) {
         ergebnisArray = await prepStmtAlleFlueglinien.all();
     }
 
-
     let returnArray = [];
     if ( ergebnisArray && ergebnisArray.length > 0 ) {
 
@@ -122,21 +124,19 @@ async function searchFluglinie( suchString ) {
  * @param {Fluglinie} fluglinie Neu anzulegende Fluglinie
  *
  * @returns {boolean} `true` wenn Fluglinie erfolgreich angelegt wurde,
- *                    `false` wenn Fluglinie bereits existiert.
+ *                    `false` wenn bereits eine Fluglinie mit dem IATA-Code existiert.
  */
-function createFluglinie( fluglinie ) {
+async function createFluglinie( fluglinie ) {
 
-    /*
-    const schonDa = readFluglinie( fluglinie.iataCode );
-    if ( schonDa ) {
+    try {
+        await prepStmtInsertFluglinie.run({ 1: fluglinie.iataCode, 2: fluglinie.name, 3: fluglinie.land });
+        return true;
+    }
+    catch ( fehler ) { // Unique constraint für Eindeutigkeit iata_code verletzt
 
-        logger.info( `Fluglinie mit IATA-Code "${fluglinie.iataCode}" existiert bereits: ${schonDa}` );
+        logger.error( `Fehler beim Einfügen von Flugline "${fluglinie.iataCode}" -- schon vorhanden? ` + fehler );
         return false;
     }
-
-    fluglinienObjekt[ fluglinie.iataCode ] = fluglinie.clone();
-    return true;
-    */
 }
 
 
@@ -146,22 +146,14 @@ function createFluglinie( fluglinie ) {
  * @param {string} iataCode IATA-Code der Fluglinie
  *
  * @return {boolean} `true` wenn Fluglinie erfolgreich gelöscht wurde,
- *                   `false` wenn Fluglinie nicht existiert.
+ *                   `false` wenn Fluglinie nicht existierte und deshalb nicht
+ *                   gelöscht werden konnte.
  */
-function deleteFluglinie( iataCode ) {
+async function deleteFluglinie( iataCode ) {
 
-    /*
-    const istDa = readFluglinie( iataCode );
-    if ( istDa ) {
+    const ergebnis = await prepStmtDeleteFluglinie.run({ 1: iataCode });
 
-        delete fluglinienObjekt[ iataCode ];
-        return true;
-
-    } else {
-
-        return false;
-    }
-    */
+    return ergebnis.changes > 0;
 }
 
 

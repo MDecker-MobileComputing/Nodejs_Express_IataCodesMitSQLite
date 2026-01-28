@@ -96,7 +96,7 @@ async function getCollection( req, res ) {
 /**
  * REST-Endpunkt für HTTP-POST auf Collection.
  */
-function postCollection( req, res ) {
+async function postCollection( req, res ) {
 
     let { iataCode, name, land } = req.body;
 
@@ -116,7 +116,7 @@ function postCollection( req, res ) {
 
         const neueFluglinie = new Fluglinie( iataCode, name, land );
 
-        const erfolg = datenbank.createFluglinie( neueFluglinie );
+        const erfolg = await datenbank.createFluglinie( neueFluglinie );
         if ( erfolg ) {
 
             const nachricht = `Neue Fluglinie angelegt: ${neueFluglinie}`;
@@ -240,12 +240,12 @@ function putResource( req, res ) {
 /**
  * REST-Endput für HTTP-DELETE auf Ressource.
  */
-function deleteResource( req, res ) {
+async function deleteResource( req, res ) {
 
     let iataCode = req.params.iataCode;
     iataCode = iataCode.toUpperCase();
 
-    const erfolg = datenbank.deleteFluglinie( iataCode );
+    const erfolg = await datenbank.deleteFluglinie( iataCode );
     if ( erfolg ) {
 
         const nachricht = `Fluglinie mit IATA-Code "${iataCode}" gelöscht.`;
