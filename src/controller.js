@@ -92,7 +92,7 @@ async function getCollection( req, res ) {
 
 
 /**
- * REST-Endpunkt für HTTP-POST auf Collection.
+ * REST-Endpunkt für HTTP-POST auf Collection, also um neue Fluglinie anzulegen.
  */
 async function postCollection( req, res ) {
 
@@ -138,7 +138,8 @@ async function postCollection( req, res ) {
 
 
 /**
- * REST-Endpunkt für HTTP-PATCH auf Ressource (einzelne Attribute ersetzen).
+ * REST-Endpunkt für HTTP-PATCH auf Ressource (einzelne Attribute ersetzen); wenn
+ * beide/alle Attribute geändert werden sollen, dann besser HTTP-PUT verwenden.
  */
 async function patchResource( req, res ) {
 
@@ -152,6 +153,7 @@ async function patchResource( req, res ) {
 
         res.status( 400 ) // Bad Request
            .json({ nachricht : nachricht });
+        return;
     }
 
     if ( req.body.name ) {
@@ -167,6 +169,7 @@ async function patchResource( req, res ) {
 
             res.status( 400 )
                .json({ nachricht: nachricht });
+            return;
         }
     }
 
@@ -183,6 +186,7 @@ async function patchResource( req, res ) {
 
             res.status( 400 )
                .json({ nachricht: nachricht });
+            return;
         }
     }
 
@@ -197,47 +201,46 @@ async function patchResource( req, res ) {
 
 
 /**
- * REST-Endpunkt für HTTP-PUT auf Ressource (ganze Ressource ersetzen).
+ * REST-Endpunkt für HTTP-PUT auf Ressource (ganze Ressource ersetzen, also beide
+ * Attribute ändern).
  */
-function putResource( req, res ) {
+async function putResource( req, res ) {
 
     let iataCode = req.params.iataCode;
     iataCode = iataCode.toUpperCase();
 
-    const ergebnisObjekt = datenbank.readFluglinie( iataCode );
-    if ( ergebnisObjekt ) {
+    let {  name, land } = req.body;
 
-        let { name, land } = req.body;
+    if (  !name || !land ) {
 
-        if ( !name || !land ) {
+        const nachricht = `Versuch, Fluglinie "${iataCode}" mit unvollständigen Attributen zu ersetzen.`;
+        logger.warn( nachricht );
 
-            const nachricht = "Versuch, Fluglinie mit unvollständigen Attribute zu ersetzen.";
-            logger.warn( nachricht );
+        res.status( 400 )
+           .json({ nachricht: nachricht });
+    }
 
-            res.status( 400 )
-               .json({ nachricht: nachricht });
+    iataCode = iataCode.trim().toUpperCase();
+    name     = name.trim();
+    land     = land.trim();
 
-        } else {
+    const neueFluglinie = new Fluglinie( iataCode, name, land );
 
-            ergebnisObjekt.name = name.trim();
-            ergebnisObjekt.land = land.trim();
+    const erfolg = await datenbank.updateFluglinie( neueFluglinie );
 
-            datenbank.updateFluglinie( ergebnisObjekt );
+    if ( erfolg ) {
 
-            const nachricht = `Entity mit IATA-Code "${iataCode}" ersetzt.`;
-            ergebnisObjekt.nachricht = nachricht;
+        logger.info( `Fluglinie mit IATA-Code \"${iataCode}\" ersetzt.` );
 
-            logger.info( nachricht );
-            res.status( 200 )
-               .json( ergebnisObjekt );
-        }
+        res.status( 200 )
+           .json( neueFluglinie );
 
     } else {
 
-        const nachricht = `Keine Fluglinie mit IATA-Code "${iataCode}" zum Ersetzen gefunden.`
+        const nachricht = `Fluglinie mit IATA-Code \"${iataCode}\" konnte nicht ersetzt werden.`;
         logger.warn( nachricht );
 
-        res.status( 404 )
+        res.status( 400 )
            .json({ nachricht: nachricht });
     }
 }
