@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+    title: IATA-Codes von Fluglinien
+    version: 1.0.0
+    description: API zur Verwaltung von IATA-Codes von Fluglinien
+paths:
+    /api/v1/fluglinie/{iataCode}:
+        get:
+            summary: Fluglinie anhand IATA-Code abfragen
+            parameters:
+                - name: iataCode
+                  in: path
+                  description: IATA-Code für Fluglinie, die gesucht werden soll
+                  required: true
+                  schema: 
+                    type: string
+            responses:
+                '200':
+                    description: Fluglinie gefunden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/FluglinieObjekt'
+                '404':
+                    description: Fluglinie nicht gefunden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErgebnisNachricht'
+        patch:
+            summary: Einzelne Attribute von Flugline ersetzen
+            parameters:
+                - name: iataCode
+                  in: path
+                  description: IATA-Code für Fluglinie, die geändert werden soll
+                  required: true
+                  schema: 
+                    type: string            
+            requestBody:
+                description: Flugliniendaten
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/FluglinieObjektOhneSchluessel'
+            responses:                            
+                '200':
+                    description: Fluglinie geändert
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/FluglinieObjekt'
+                '400':
+                    description: Fluglinie konnte nicht geändert werden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErgebnisNachricht'                  
+        put:
+            summary: Alle Attribute eines Fluglinienobjekts ersetzen (bis auf IATA-Code)
+            parameters:
+                - name: iataCode
+                  in: path
+                  description: IATA-Code der Fluglinie, die ersetzt werden soll
+                  required: true
+                  schema: 
+                    type: string            
+            requestBody:
+                description: Flugliniendaten
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/FluglinieObjektOhneSchluessel'
+            responses:                            
+                '200':
+                    description: Fluglinie ersetzt
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/FluglinieObjekt'
+                '400':
+                    description: Fluglinie konnte nicht ersetzt werden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErgebnisNachricht'                  
+        delete:
+            summary: Fluglinie anhand IATA-Code löschen
+            parameters:
+                - name: iataCode
+                  in: path
+                  description: IATA-Code für Fluglinie, die gelöscht werden soll
+                  required: true
+                  schema: 
+                    type: string
+            responses:
+                '200':  
+                    description: Fluglinie gelöscht
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErgebnisNachricht'                         
+                '404':
+                    description: Fluglinie zum Löschen nicht gefunden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErgebnisNachricht'                    
+
+    /api/v1/fluglinie/:
+        get:
+            summary: Mehrere Fluglinien abfragen
+            parameters:
+                - name: q
+                  in: query
+                  description: Suchbegriff für Fluglinie
+                  required: false
+                  schema:
+                    type: string
+            responses:
+                '200':
+                    description: Liste von Fluglinien
+                    headers:
+                        X-anzahl:
+                            description: Anzahl der gefundenen Fluglinien
+                            schema:
+                                type: integer
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/FluglinieObjekt'
+        post:
+            summary: Neue Fluglinie anlegen
+            requestBody:
+                description: Flugliniendaten
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/FluglinieObjekt'
+            responses:
+                '201':
+                    description: Fluglinie erfolgreich angelegt
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/FluglinieObjekt'
+                '400':
+                    description: Ungültige Eingabedaten
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErgebnisNachricht'
+                                                
+            
+components:
+    schemas:
+        FluglinieObjekt:
+            type: object
+            properties: 
+                iataCode:
+                    type: string
+                name:
+                    type: string
+                land:
+                    type: string
+        FluglinieObjektOhneSchluessel:
+            type: object
+            properties: 
+                name:
+                    type: string
+                land:
+                    type: string                    
+        ErgebnisNachricht:
+            type: object
+            properties:
+                nachricht:
+                    type: string

@@ -211,13 +211,14 @@ async function putResource( req, res ) {
 
     let {  name, land } = req.body;
 
-    if (  !name || !land ) {
+    if ( !name || !land ) {
 
         const nachricht = `Versuch, Fluglinie "${iataCode}" mit unvollständigen Attributen zu ersetzen.`;
         logger.warn( nachricht );
 
         res.status( 400 )
            .json({ nachricht: nachricht });
+        return;
     }
 
     iataCode = iataCode.trim().toUpperCase();
