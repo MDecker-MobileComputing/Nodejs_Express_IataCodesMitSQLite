@@ -75,8 +75,8 @@ async function readFluglinie( iataCode ) {
 }
 
 
-const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ? ORDER BY iata_code" );
-const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code" );
+const prepStmtSearchFlueglinie = await db.prepare( "SELECT * FROM fluglinien WHERE name LIKE ? OR land LIKE ? ORDER BY iata_code ASC" );
+const prepStmtAlleFlueglinien  = await db.prepare( "SELECT * FROM fluglinien ORDER BY iata_code ASC" );
 
 /**
  * Suche nach Fluglinien anhand eines Such-Strings oder alle Fluglinien zurückliefern.
