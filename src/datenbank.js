@@ -100,7 +100,7 @@ async function searchFluglinie( suchString ) {
         ergebnisArray = await prepStmtAlleFlueglinien.all();
     }
 
-    let returnArray = [];
+    const returnArray = [];
     if ( ergebnisArray && ergebnisArray.length > 0 ) {
 
         for ( let i = 0; i < ergebnisArray.length; i++ ) {
