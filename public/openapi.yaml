@@ -12,7 +12,7 @@ paths:
                   in: path
                   description: IATA-Code für Fluglinie, die gesucht werden soll
                   required: true
-                  schema: 
+                  schema:
                     type: string
             responses:
                 '200':
@@ -34,8 +34,8 @@ paths:
                   in: path
                   description: IATA-Code für Fluglinie, die geändert werden soll
                   required: true
-                  schema: 
-                    type: string            
+                  schema:
+                    type: string
             requestBody:
                 description: Flugliniendaten
                 required: true
@@ -43,7 +43,7 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/FluglinieObjektOhneSchluessel'
-            responses:                            
+            responses:
                 '200':
                     description: Fluglinie geändert
                     content:
@@ -55,7 +55,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErgebnisNachricht'                  
+                                $ref: '#/components/schemas/ErgebnisNachricht'
         put:
             summary: Alle Attribute eines Fluglinienobjekts ersetzen (bis auf IATA-Code)
             parameters:
@@ -63,8 +63,8 @@ paths:
                   in: path
                   description: IATA-Code der Fluglinie, die ersetzt werden soll
                   required: true
-                  schema: 
-                    type: string            
+                  schema:
+                    type: string
             requestBody:
                 description: Flugliniendaten
                 required: true
@@ -72,7 +72,7 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/FluglinieObjektOhneSchluessel'
-            responses:                            
+            responses:
                 '200':
                     description: Fluglinie ersetzt
                     content:
@@ -84,7 +84,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErgebnisNachricht'                  
+                                $ref: '#/components/schemas/ErgebnisNachricht'
         delete:
             summary: Fluglinie anhand IATA-Code löschen
             parameters:
@@ -92,21 +92,21 @@ paths:
                   in: path
                   description: IATA-Code für Fluglinie, die gelöscht werden soll
                   required: true
-                  schema: 
+                  schema:
                     type: string
             responses:
-                '200':  
+                '200':
                     description: Fluglinie gelöscht
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErgebnisNachricht'                         
+                                $ref: '#/components/schemas/ErgebnisNachricht'
                 '404':
                     description: Fluglinie zum Löschen nicht gefunden
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErgebnisNachricht'                    
+                                $ref: '#/components/schemas/ErgebnisNachricht'
 
     /api/v1/fluglinie/:
         get:
@@ -154,13 +154,13 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ErgebnisNachricht'
-                                                
-            
+
+
 components:
     schemas:
         FluglinieObjekt:
             type: object
-            properties: 
+            properties:
                 iataCode:
                     type: string
                 name:
@@ -169,11 +169,11 @@ components:
                     type: string
         FluglinieObjektOhneSchluessel:
             type: object
-            properties: 
+            properties:
                 name:
                     type: string
                 land:
-                    type: string                    
+                    type: string
         ErgebnisNachricht:
             type: object
             properties:
