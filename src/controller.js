@@ -119,8 +119,6 @@ async function postCollection( req, res ) {
             const nachricht = `Neue Fluglinie angelegt: ${neueFluglinie}`;
             logger.info( nachricht );
 
-            neueFluglinie.nachricht = nachricht;
-
             res.status( 201 ) // Created
                .json( neueFluglinie );
 
