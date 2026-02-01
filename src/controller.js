@@ -54,7 +54,6 @@ async function getResource( req, res ) {
 
         const nachricht = `Fluglinie mit IATA-Code "${iataCode}" gefunden.`;
         logger.info( nachricht );
-        ergebnisObjekt.nachricht = nachricht;
 
         res.status( 200 )
            .json( ergebnisObjekt );
