@@ -2,7 +2,7 @@ import express            from "express";
 import logging            from "logging";
 import routenRegistrieren from './controller.js';
 
-import { swaggerUiKonfigurieren        } from "./openapi.js";
+import { swaggerUiKonfigurieren } from "./openapi.js";
 
 
 const PORT_NUMMER = 8080;
