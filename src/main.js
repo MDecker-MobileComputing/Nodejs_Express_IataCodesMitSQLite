@@ -3,7 +3,7 @@ import logging            from "logging";
 import routenRegistrieren from './controller.js';
 
 import { swaggerUiKonfigurieren        } from "./openapi.js";
-import { openApiValidatorKonfigurieren } from "./openapi.js";
+
 
 const PORT_NUMMER = 8080;
 
@@ -17,7 +17,6 @@ app.use( express.static( "public" ) );
 routenRegistrieren( app );
 
 swaggerUiKonfigurieren( app );
-openApiValidatorKonfigurieren( app );
 
 
 app.listen( PORT_NUMMER,
