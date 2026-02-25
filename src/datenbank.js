@@ -1,9 +1,9 @@
 import { open }      from "sqlite";
 import sqlite3       from "sqlite3";
-import logging       from "logging";
+import createLogger  from "logging";
 import { Fluglinie } from './fluglinie.js';
 
-const logger = logging.default( "datenbank" );
+const logger = createLogger( "datenbank" );
 
 
 const db = await open({ filename: "iatacodes.db", driver: sqlite3.Database });

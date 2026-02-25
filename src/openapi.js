@@ -1,9 +1,9 @@
-import logging          from "logging";
-import swaggerUi        from "swagger-ui-express";
-import yaml             from "yamljs";
+import createLogger from "logging";
+import swaggerUi    from "swagger-ui-express";
+import yaml         from "yamljs";
 
 
-const logger = logging.default( "openapi" );
+const logger = createLogger( "datenbank" );
 
 
 /*
@@ -29,9 +29,9 @@ export function swaggerUiKonfigurieren( app ) {
 
         const pfad = "/api-docs";
 
-        app.use( pfad, 
-                 swaggerUi.serve, 
-                 swaggerUi.setup( swaggerDocument ) 
+        app.use( pfad,
+                 swaggerUi.serve,
+                 swaggerUi.setup( swaggerDocument )
                );
 
         logger.info( `Swagger-UI registriert unter ${pfad}` );

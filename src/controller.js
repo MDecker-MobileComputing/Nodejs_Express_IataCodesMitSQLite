@@ -1,8 +1,8 @@
-import logging       from "logging";
+import createLogger  from "logging";
 import datenbank     from "./datenbank.js";
 import { Fluglinie } from "./fluglinie.js";
 
-const logger = logging.default( "controller" );
+const logger = createLogger( "datenbank" );
 
 const API_PREFIX = "/api/v1";
 const ENTITY_TYP = "fluglinie";
